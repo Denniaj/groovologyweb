@@ -12,7 +12,7 @@ de ejemplo, pero no se puede lanzar.
 - [ ] **Supabase**: proyecto creado (base de datos + auth + storage)
 - [ ] **Vercel**: cuenta enlazada al repo de GitHub para hosting/deploy
 - [ ] **Resend**: cuenta para correos transaccionales
-- [ ] **Anthropic (Claude API)**: API key para el análisis de comprobantes SINPE
+- [ ] **Gemini (Google AI)**: API key para el análisis de comprobantes SINPE
 - [ ] **Dominio**: nombre definitivo (¿`groovology.com`, `.cr`, otro?) — comprarlo
       a nombre de Groovology
 - [ ] **Google Business Profile** de la sede (clave para SEO local)

@@ -30,7 +30,7 @@ por definir/aportar (cuentas, contenido, decisiones) en [`NECESITAMOS.md`](./NEC
 | **Vercel** | Hosting + Cron jobs |
 | **react-hook-form + Zod** | Formularios con validación (front + back) |
 | **date-fns-tz** | Fechas en `America/Costa_Rica` |
-| **Claude API (Anthropic, visión)** | Extrae monto, referencia y fecha del comprobante SINPE; si coincide con lo esperado y la referencia no se reutilizó, el cargo se aprueba automáticamente. Casos dudosos (monto no coincide, referencia repetida, imagen ilegible) quedan en revisión manual — es la excepción, no la regla |
+| **Gemini API (Google, visión)** | Extrae monto, referencia y fecha del comprobante SINPE; si coincide con lo esperado y la referencia no se reutilizó, el cargo se aprueba automáticamente. Casos dudosos (monto no coincide, referencia repetida, imagen ilegible) quedan en revisión manual — es la excepción, no la regla |
 
 ### Por qué este stack (heredado de Base)
 
@@ -93,7 +93,7 @@ groovologyweb/
 
 ```bash
 npm install
-cp .env.example .env.local   # llenar con las llaves de Supabase, Resend, Anthropic
+cp .env.example .env.local   # llenar con las llaves de Supabase, Resend, Gemini
 npm run dev
 ```
 

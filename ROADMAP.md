@@ -19,7 +19,7 @@ No empieces una fase sin tener la anterior funcionando.
 - [ ] Proyecto en Supabase creado (región más cercana a Costa Rica)
 - [ ] Proyecto en Vercel enlazado al repo de GitHub
 - [ ] Cuenta Resend (correos transaccionales)
-- [ ] Llave de Anthropic API (análisis de comprobantes SINPE)
+- [ ] Llave de Gemini API (análisis de comprobantes SINPE)
 - [ ] `shadcn/ui` inicializado (`npx shadcn@latest init`)
 - [ ] `.env.local` completo, `npm run dev` levanta sin errores
 
@@ -166,7 +166,7 @@ y los datos semilla (estilos, paquetes de ejemplo) quedan cargados.
       clases sueltas antes de decidirse por un paquete — crea un `charge` tipo
       `trial_extra` de ₡2 000 por clase
 - [ ] `lib/receipts/`: sube el comprobante a Storage (bucket privado), llama a
-      Claude API (visión) para extraer monto, referencia, remitente y fecha, y
+      Gemini API (visión) para extraer monto, referencia, remitente y fecha, y
       **decide automáticamente** sin intervención del admin:
       - si el monto extraído coincide con el del `charge` (tolerancia mínima)
         y la referencia SINPE no se usó antes → el cargo pasa a `paid` solo
@@ -217,7 +217,7 @@ paso — sin que un admin tenga que aprobarlo a mano en el caso normal.
 - [ ] Deduplicación de comprobantes: **índice único en la referencia SINPE**
       (`payment_receipts.sinpe_reference`) — impide a nivel de base de datos
       que el mismo comprobante se reutilice para aprobar dos cargos, aunque el
-      análisis de Claude falle en detectarlo
+      análisis de Gemini falle en detectarlo
 - [ ] Casos que la extracción no puede resolver con confianza (monto no
       coincide, imagen no legible, referencia duplicada) **nunca se
       auto-aprueban**: quedan en `needs_review` para que un admin los revise a mano
