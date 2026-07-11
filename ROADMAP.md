@@ -15,13 +15,13 @@ No empieces una fase sin tener la anterior funcionando.
 
 ## Fase 0 — Infraestructura y entorno
 
-- [ ] `npx create-next-app@latest` (TS, ESLint, Tailwind, App Router, sin `src/`)
-- [ ] Proyecto en Supabase creado (región más cercana a Costa Rica)
-- [ ] Proyecto en Vercel enlazado al repo de GitHub
-- [ ] Cuenta Resend (correos transaccionales)
-- [ ] Llave de Gemini API (análisis de comprobantes SINPE)
-- [ ] `shadcn/ui` inicializado (`npx shadcn@latest init`)
-- [ ] `.env.local` completo, `npm run dev` levanta sin errores
+- [x] `npx create-next-app@latest` (TS, ESLint, Tailwind, App Router, sin `src/`)
+- [x] Proyecto en Supabase creado (región más cercana a Costa Rica)
+- [x] Proyecto en Vercel enlazado al repo de GitHub
+- [x] Cuenta Resend (correos transaccionales)
+- [x] Llave de Gemini API (análisis de comprobantes SINPE)
+- [x] `shadcn/ui` inicializado (`npx shadcn@latest init`)
+- [x] `.env.local` completo, `npm run dev` levanta sin errores
 
 **Listo cuando:** el proyecto corre local y tiene todos los servicios externos
 provisionados (aunque vacíos).
@@ -32,65 +32,65 @@ provisionados (aunque vacíos).
 
 Diseño de esquema, en migraciones numeradas (`supabase/migrations/000N_*.sql`).
 
-- [ ] `profiles` (id, role: `admin` | `student` — **sin rol `instructor` con
+- [x] `profiles` (id, role: `admin` | `student` — **sin rol `instructor` con
       login propio**, los instructores no necesitan cuenta, se administran
       como simple dato de catálogo; ver `instructors` abajo). Campos del
       registro: nombre, apellidos, email, teléfono, **fecha de nacimiento**
       (la edad se calcula al vuelo, no se guarda un número que se desactualiza),
       **cédula**, `is_new_student` (booleano: ¿es alumna nueva o ya venía
       tomando clases? — define si se le ofrece la clase de prueba)
-- [ ] `dance_styles` (salsa, bachata, hip hop, etc. — nombre, descripción, nivel)
-- [ ] `instructors` (nombre, bio, especialidades, foto — **tabla de catálogo,
+- [x] `dance_styles` (salsa, bachata, hip hop, etc. — nombre, descripción, nivel)
+- [x] `instructors` (nombre, bio, especialidades, foto — **tabla de catálogo,
       no de usuarios**; no requiere auth ni login, solo lo gestiona el admin)
-- [ ] `crew_members` (equipo competitivo "Crew Pro": nombre, foto, logros/bio
+- [x] `crew_members` (equipo competitivo "Crew Pro": nombre, foto, logros/bio
       corta, orden — **misma lógica que `instructors`**: solo contenido de
       catálogo para la página de presentación, sin login ni lógica de aplicación)
-- [ ] `classes` (estilo, nivel, instructor, día/hora recurrente, duración, cupo, salón)
-- [ ] `packages` (planes de mensualidad por **frecuencia semanal**: 1 clase/semana,
+- [x] `classes` (estilo, nivel, instructor, día/hora recurrente, duración, cupo, salón)
+- [x] `packages` (planes de mensualidad por **frecuencia semanal**: 1 clase/semana,
       2 clases/semana, 3 clases/semana, o **ilimitado**; nombre, precio,
       vigencia en días — **todo alumno activo paga uno**, el monto depende del
       plan que eligió, no todos pagan lo mismo)
-- [ ] `enrollments` (alumno, paquete, clase(s), estado: `pending_payment` /
+- [x] `enrollments` (alumno, paquete, clase(s), estado: `pending_payment` /
       `active` / `expired` / `cancelled`, fecha inicio/fin) — genera el cargo
       recurrente de mensualidad (tipo `package` en `charges`). **Un alumno
       puede tener varias inscripciones activas a la vez** (varios estilos o
       incluso varios paquetes en paralelo) — no hay límite de una sola activa
-- [ ] `enrollments.minor_name` (nullable): para clases de niños (ej. "Peques"),
+- [x] `enrollments.minor_name` (nullable): para clases de niños (ej. "Peques"),
       **el padre/madre es quien tiene la cuenta** (su nombre, cédula, email,
       paga y sube comprobantes) y simplemente escribe el nombre del niño en
       este campo al inscribirlo — no se crea un perfil/cuenta aparte para el
       menor. El roster de "estudiantes por clase" muestra el nombre del niño
       cuando este campo tiene valor, y si no, el nombre del alumno adulto
-- [ ] `trial_classes` (control de la clase de prueba gratuita: alumno, clase,
+- [x] `trial_classes` (control de la clase de prueba gratuita: alumno, clase,
       fecha tomada) con **constraint único por alumno a nivel de base de
       datos** (`UNIQUE(student_id)`) — si ya la usó, la opción de "Tomar clase
       de prueba" **ni siquiera debe aparecer** en su cuenta, y si de todas
       formas se intenta, el RPC/constraint lo rechaza. No es una alerta para
       que el admin lo note después: el sistema **bloquea el registro
       directamente**. Requiere estar registrado — no se ofrece como invitado
-- [ ] `charges.type` incluye también `trial_extra`: clases sueltas a **₡2 000
+- [x] `charges.type` incluye también `trial_extra`: clases sueltas a **₡2 000
       cada una** que un alumno nuevo puede tomar durante su semana de prueba,
       antes de decidirse por un paquete mensual (drop-in, no requiere paquete)
-- [ ] `events` (competencias/festivales/showcases: nombre, descripción, fecha,
+- [x] `events` (competencias/festivales/showcases: nombre, descripción, fecha,
       foto, estado: `open` / `closed`) — **participación opcional**, no todos
       los alumnos están en un evento. **Sin precio fijo en la tabla**: cada
       evento tiene costos distintos (vestuario, montaje, inscripción cambian
       según la competencia), así que los montos los define el admin al
       momento de armar el evento, no un catálogo fijo
-- [ ] `event_participants` (solo los alumnos que se unen a ese evento en
+- [x] `event_participants` (solo los alumnos que se unen a ese evento en
       particular — genera únicamente para ellos los cargos de vestuario,
       montaje e inscripción de ese evento). El admin define/edita el monto de
       cada cargo por participante (no todos pagan igual si, por ejemplo, el
       vestuario varía por talla/rol en la coreografía) y puede **corregirlo
       después** si el costo cambia antes de que el alumno pague
-- [ ] `charges` — **tabla genérica de cobros** que junta ambos casos: cargos de
+- [x] `charges` — **tabla genérica de cobros** que junta ambos casos: cargos de
       mensualidad (todos los alumnos activos, monto según su plan) y cargos de
       evento (solo quienes están en `event_participants` de ese evento).
       Campos: alumno, tipo (`package` / `trial_extra` / `event_costume` /
       `event_choreography` / `event_registration` / `other`), descripción,
       monto, `enrollment_id` o `event_participant_id` (nullable, según el
       origen), fecha límite de pago, estado (`pending` / `paid` / `overdue` / `cancelled`)
-- [ ] **Cargos en abonos/partes**: para eventos, el admin no siempre cobra el
+- [x] **Cargos en abonos/partes**: para eventos, el admin no siempre cobra el
       monto completo de una vez (ej. "mitad del vestuario ahora, resto
       después") y el split no es siempre igual. En vez de una lógica de cuotas
       fija en el sistema, el admin simplemente **crea tantos `charges` como
@@ -98,35 +98,35 @@ Diseño de esquema, en migraciones numeradas (`supabase/migrations/000N_*.sql`).
       anticipo" y "Vestuario — saldo", cada una con su propio monto y fecha
       límite libremente definidos). Esto evita hardcodear un esquema de
       cuotas que no aplica igual en todos los eventos
-- [ ] `overdue` en un cargo es **solo informativo** (fecha límite pasada y sin
+- [x] `overdue` en un cargo es **solo informativo** (fecha límite pasada y sin
       pagar) — el sistema **no expulsa ni cancela nada automáticamente**. Si un
       alumno no paga a tiempo, la decisión de qué hacer (retirarlo de la
       coreografía, darle más plazo, etc.) siempre la toma el admin manualmente
-- [ ] `payment_receipts` (comprobante SINPE ligado a un `charge_id`: referencia,
+- [x] `payment_receipts` (comprobante SINPE ligado a un `charge_id`: referencia,
       monto, remitente, fecha detectados por el análisis automático; estado
       `auto_approved` / `needs_review` / `rejected`; si un admin intervino en
       un caso `needs_review`, queda quién y cuándo; archivo en Storage). Un
       comprobante puede cubrir un solo cargo o, si el alumno sube un solo
       comprobante por varios cargos, dividirse manualmente por el admin.
-- [ ] ~~`class_sessions` / control de asistencia~~ — **descartado**: no hace
+- [x] ~~`class_sessions` / control de asistencia~~ — **descartado**: no hace
       falta pasar lista ni llevar historial de asistencia por sesión; el
       roster de "estudiantes por clase" (Fase 6) alcanza con solo listar
       quién está inscrito
-- [ ] `settings` (WhatsApp, email, dirección de la sede, redes sociales —
+- [x] `settings` (WhatsApp, email, dirección de la sede, redes sociales —
       **Instagram, TikTok, Facebook** (YouTube no, por ahora) —, número SINPE
       para recibir pagos, toggle "inscripciones abiertas")
-- [ ] `admin_notifications` (tipo: `trial_requested` / `receipt_uploaded` /
+- [x] `admin_notifications` (tipo: `trial_requested` / `receipt_uploaded` /
       `event_joined` / `other`, referencia al registro origen, leída/no leída) —
       alimenta la bandeja de notificaciones del panel admin
-- [ ] `gallery_photos` (galería pública: url de la foto en Storage, categoría
+- [x] `gallery_photos` (galería pública: url de la foto en Storage, categoría
       opcional — clases / eventos / sede / general —, descripción corta,
       orden). Bucket de Storage **público** (a diferencia del de comprobantes,
       que es privado) ya que son fotos promocionales
-- [ ] Constraint anti-sobrecupo: no permitir más inscripciones activas que el
+- [x] Constraint anti-sobrecupo: no permitir más inscripciones activas que el
       cupo de la clase (`CHECK`/trigger, igual que el `EXCLUDE` de Base para citas)
-- [ ] Índice único en `payment_receipts.sinpe_reference` para evitar reutilizar
+- [x] Índice único en `payment_receipts.sinpe_reference` para evitar reutilizar
       el mismo comprobante en dos cargos distintos
-- [ ] RPCs: `enroll_student`, `cancel_enrollment`, `get_available_capacity`,
+- [x] RPCs: `enroll_student`, `cancel_enrollment`, `get_available_capacity`,
       `join_event` (inscribe al alumno y genera sus `charges` de evento),
       `take_trial_class` (valida que no la haya usado antes, la marca en
       `trial_classes`, crea notificación para el admin), `get_student_balance`
