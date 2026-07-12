@@ -204,29 +204,29 @@ paso — sin que un admin tenga que aprobarlo a mano en el caso normal.
 
 ## Fase 3 — Seguridad
 
-- [ ] RLS en todas las tablas (alumno ve solo lo suyo; instructor ve sus clases;
+- [x] RLS en todas las tablas (alumno ve solo lo suyo; instructor ve sus clases;
       admin ve todo)
-- [ ] Bucket de comprobantes **privado**, acceso solo vía URL firmada de corta duración
-- [ ] **Verificación automática del comprobante**: el cargo se marca `paid`
+- [x] Bucket de comprobantes **privado**, acceso solo vía URL firmada de corta duración
+- [x] **Verificación automática del comprobante**: el cargo se marca `paid`
       solo si el monto extraído coincide con el esperado y la referencia SINPE
       no se ha usado antes; no requiere clic de un admin en el caso normal.
       Esto es una decisión de producto (velocidad y menos trabajo manual), no
       un descuido de seguridad — por eso las validaciones duras de abajo son
       innegociables: sin ellas, un comprobante falso o reciclado se
       auto-aprobaría solo
-- [ ] Deduplicación de comprobantes: **índice único en la referencia SINPE**
+- [x] Deduplicación de comprobantes: **índice único en la referencia SINPE**
       (`payment_receipts.sinpe_reference`) — impide a nivel de base de datos
       que el mismo comprobante se reutilice para aprobar dos cargos, aunque el
       análisis de Gemini falle en detectarlo
-- [ ] Casos que la extracción no puede resolver con confianza (monto no
+- [x] Casos que la extracción no puede resolver con confianza (monto no
       coincide, imagen no legible, referencia duplicada) **nunca se
       auto-aprueban**: quedan en `needs_review` para que un admin los revise a mano
-- [ ] Rate limiting por IP: registro, login, inscripción, subida de comprobantes
-- [ ] Security headers (CSP, HSTS, X-Frame-Options, Permissions-Policy) en `next.config.ts`
-- [ ] Validación Zod en todos los inputs (frontend + server)
-- [ ] Contraseñas con complejidad mínima
-- [ ] Cron protegido con `CRON_SECRET` (comparación timing-safe)
-- [ ] Páginas privadas no indexadas (`robots`/`noindex`): login, registro, mi-cuenta, admin
+- [x] Rate limiting por IP: registro, login, inscripción, subida de comprobantes
+- [x] Security headers (CSP, HSTS, X-Frame-Options, Permissions-Policy) en `next.config.ts`
+- [x] Validación Zod en todos los inputs (frontend + server)
+- [x] Contraseñas con complejidad mínima
+- [x] Cron protegido con `CRON_SECRET` (comparación timing-safe)
+- [x] Páginas privadas no indexadas (`robots`/`noindex`): login, registro, mi-cuenta, admin
 - [ ] Política de privacidad conforme a Ley 8968 (Costa Rica) — datos de alumnos y comprobantes
 
 **Listo cuando:** un intento de leer/editar datos ajenos falla a nivel de base
