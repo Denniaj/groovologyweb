@@ -139,11 +139,11 @@ y los datos semilla (estilos, paquetes de ejemplo) quedan cargados.
 
 ## Fase 2 — Backend
 
-- [ ] `lib/supabase/{client,server,admin}.ts` (mismo patrón que Base: `admin.ts`
+- [x] `lib/supabase/{client,server,admin}.ts` (mismo patrón que Base: `admin.ts`
       con service-role solo se importa en server actions/cron, nunca en cliente)
-- [ ] Server Actions: registro (ver flujo abajo), login, inscribirse a
+- [x] Server Actions: registro (ver flujo abajo), login, inscribirse a
       clase/paquete, unirse a un evento, subir comprobante (ligado a un cargo específico)
-- [ ] **Flujo de registro** (un solo formulario, todo junto): nombre, apellidos,
+- [x] **Flujo de registro** (un solo formulario, todo junto): nombre, apellidos,
       email, contraseña, teléfono, fecha de nacimiento, cédula, y ¿es alumna
       nueva? →
       - si **no** es nueva: selecciona ya mismo su/sus paquete(s) y las
@@ -158,14 +158,14 @@ y los datos semilla (estilos, paquetes de ejemplo) quedan cargados.
       - al enviar el formulario, `enroll_student`/`join_event` generan
         automáticamente todos los `charges` correspondientes (mensualidad del
         paquete elegido + cargos del evento si marcó alguno)
-- [ ] `takeTrialClass`: acción para "Tomar clase de prueba" — requiere sesión
+- [x] `takeTrialClass`: acción para "Tomar clase de prueba" — requiere sesión
       iniciada (nunca como invitado), valida vía `trial_classes` que el alumno
       no la haya usado antes (límite de una en la vida), la registra y crea un
       `admin_notifications` para avisar al equipo
-- [ ] `bookExtraClass`: para alumnos en su semana de prueba que quieren tomar
+- [x] `bookExtraClass`: para alumnos en su semana de prueba que quieren tomar
       clases sueltas antes de decidirse por un paquete — crea un `charge` tipo
       `trial_extra` de ₡2 000 por clase
-- [ ] `lib/receipts/`: sube el comprobante a Storage (bucket privado), llama a
+- [x] `lib/receipts/`: sube el comprobante a Storage (bucket privado), llama a
       Gemini API (visión) para extraer monto, referencia, remitente y fecha, y
       **decide automáticamente** sin intervención del admin:
       - si el monto extraído coincide con el del `charge` (tolerancia mínima)
@@ -175,21 +175,21 @@ y los datos semilla (estilos, paquetes de ejemplo) quedan cargados.
         falla/no es legible → el cargo se queda en `pending`/pasa a un estado
         `needs_review`, visible en el panel para que el admin lo revise a mano
         **solo en ese caso excepcional** (no es el flujo normal)
-- [ ] El panel admin **no tiene botón de confirmar/rechazar** para el caso
+- [x] El panel admin **no tiene botón de confirmar/rechazar** para el caso
       normal: solo muestra, por alumno, si ya pagó o debe. La única acción
       manual es corregir los casos marcados `needs_review`
-- [ ] Al crear/editar un evento y asignar participantes, generar automáticamente
+- [x] Al crear/editar un evento y asignar participantes, generar automáticamente
       los `charges` de ese alumno (vestuario, montaje, inscripción) según los
       montos definidos por el admin para ese evento
-- [ ] `lib/email/`: plantillas React Email (bienvenida, inscripción recibida,
+- [x] `lib/email/`: plantillas React Email (bienvenida, inscripción recibida,
       comprobante verificado/rechazado, recordatorio de clase, paquete por
       vencer, nuevo cargo de evento asignado, recordatorio de cargo pendiente)
-- [ ] Cron (`app/api/cron/`): recordatorio de próxima clase, aviso de
+- [x] Cron (`app/api/cron/`): recordatorio de próxima clase, aviso de
       vencimiento de paquete (3 días antes), expirar paquetes vencidos,
       recordatorio de cargos (mensualidad o evento) próximos a su fecha límite
       o ya vencidos — **el cron solo avisa por correo**, nunca retira al
       alumno de un evento ni cancela nada; eso queda siempre a criterio del admin
-- [ ] `lib/validations.ts` (Zod): formulario de registro (nombre, apellidos,
+- [x] `lib/validations.ts` (Zod): formulario de registro (nombre, apellidos,
       email, teléfono, fecha de nacimiento válida, formato de cédula CR,
       selección de paquete/clases o marca de "alumna nueva", eventos
       opcionales), inscripción, unirse a evento, subida de comprobante (tipo
