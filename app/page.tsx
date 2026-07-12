@@ -6,8 +6,8 @@ import { Socials } from '@/components/site/Socials'
 
 const FEATURES = [
   { icon: Zap, title: 'Entrenamiento', text: 'Clases diseñadas para todos los niveles.' },
-  { icon: Crown, title: 'Comunidad', text: 'Un ambiente real, donde creces y te inspiras.' },
-  { icon: Globe, title: 'Experiencia', text: 'Maestros con trayectoria y pasión por enseñar.' },
+  { icon: Crown, title: 'Comunidad', text: 'Un ambiente seguro para crecer, crear y compartir.' },
+  { icon: Globe, title: 'Experiencia', text: 'Clases guiadas por profes con pasión, técnica y trayectoria.' },
   { icon: Sparkles, title: 'Oportunidades', text: 'Compañía de competencia y proyectos reales.' },
 ]
 
