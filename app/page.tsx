@@ -1,65 +1,97 @@
-import Image from "next/image";
+import Link from 'next/link'
+import { ArrowRight, Zap, Crown, Globe, Sparkles } from 'lucide-react'
+import { getStyles, getSettings } from '@/lib/data'
+import { PhotoPlaceholder } from '@/components/site/PhotoPlaceholder'
+import { Socials } from '@/components/site/Socials'
 
-export default function Home() {
+const FEATURES = [
+  { icon: Zap, title: 'Entrenamiento', text: 'Clases diseñadas para todos los niveles.' },
+  { icon: Crown, title: 'Comunidad', text: 'Un ambiente real, donde creces y te inspiras.' },
+  { icon: Globe, title: 'Experiencia', text: 'Maestros con trayectoria y pasión por enseñar.' },
+  { icon: Sparkles, title: 'Oportunidades', text: 'Compañía de competencia y proyectos reales.' },
+]
+
+export default async function HomePage() {
+  const [styles, settings] = await Promise.all([getStyles(), getSettings()])
+  const featured = styles.filter((s) => s.slug !== 'crew-pro' && s.slug !== 'freestyle').slice(0, 4)
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <>
+      {/* HERO */}
+      <section className="relative border-b border-white/10">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 py-16 lg:grid-cols-2 lg:gap-12 lg:px-8 lg:py-24">
+          <div>
+            <h1 className="font-display text-5xl uppercase leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
+              Más que baile,<br />es actitud.
+            </h1>
+            <p className="mt-6 max-w-md text-base text-white/70">
+              Estudio y compañía de bailarines en Costa Rica. Entrenamiento profesional
+              en un espacio seguro para impulsar tus sueños.
+            </p>
+            <Link
+              href="/nosotros"
+              className="mt-8 inline-flex items-center gap-3 bg-white px-7 py-3.5 text-sm font-semibold uppercase tracking-widest text-black transition-colors hover:bg-white/85"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              Conoce más <ArrowRight size={18} />
+            </Link>
+          </div>
+
+          <div className="relative">
+            <PhotoPlaceholder label="Groovology" className="aspect-[4/3] w-full lg:aspect-[5/4]" />
+            <Socials settings={settings} className="absolute -right-2 top-1/2 hidden -translate-y-1/2 flex-col lg:flex" />
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURES */}
+      <section className="border-b border-white/10 bg-black">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-px px-5 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
+          {FEATURES.map((f) => (
+            <div key={f.title} className="flex gap-4 py-8 sm:px-6">
+              <f.icon size={26} className="mt-1 shrink-0" strokeWidth={1.5} />
+              <div>
+                <h3 className="text-sm font-semibold uppercase tracking-widest">{f.title}</h3>
+                <p className="mt-1 text-sm text-white/60">{f.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* NUESTRAS CLASES */}
+      <section className="mx-auto max-w-7xl px-5 py-16 lg:px-8 lg:py-24">
+        <div className="grid gap-10 lg:grid-cols-[280px_1fr] lg:gap-12">
+          <div>
+            <h2 className="font-display text-4xl uppercase leading-none tracking-tight lg:text-5xl">
+              Nuestras<br />clases
+            </h2>
+            <p className="mt-5 max-w-xs text-sm text-white/60">
+              Explora estilos urbanos y encuentra tu movimiento.
+            </p>
+            <Link
+              href="/horarios"
+              className="mt-6 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-white transition-colors hover:text-white/70"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              Ver horarios <ArrowRight size={16} />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {featured.map((s) => (
+              <Link key={s.id} href={`/clases/${s.slug}`} className="group block">
+                <PhotoPlaceholder label={s.name} className="aspect-[3/4] w-full" />
+                <div className="mt-3">
+                  <h3 className="font-display text-xl uppercase tracking-wide">{s.name}</h3>
+                  <p className="mt-1 flex items-center justify-between text-xs uppercase tracking-widest text-white/50">
+                    {s.short_description}
+                    <ArrowRight size={14} className="shrink-0 transition-transform group-hover:translate-x-1" />
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+      </section>
+    </>
+  )
 }
