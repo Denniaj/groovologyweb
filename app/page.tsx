@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ArrowRight, Zap, Crown, Globe, Sparkles } from 'lucide-react'
 import { getStyles, getSettings } from '@/lib/data'
 import { PhotoPlaceholder } from '@/components/site/PhotoPlaceholder'
+import { StyleImage } from '@/components/site/StyleImage'
 import { Socials } from '@/components/site/Socials'
 
 const FEATURES = [
@@ -79,7 +80,7 @@ export default async function HomePage() {
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {featured.map((s) => (
               <Link key={s.id} href={`/clases/${s.slug}`} className="group block">
-                <PhotoPlaceholder label={s.name} className="aspect-[3/4] w-full" />
+                <StyleImage slug={s.slug} name={s.name} className="aspect-[3/4] w-full" />
                 <div className="mt-3">
                   <h3 className="font-display text-xl uppercase tracking-wide">{s.name}</h3>
                   <p className="mt-1 flex items-center justify-between text-xs uppercase tracking-widest text-white/50">
