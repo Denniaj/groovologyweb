@@ -1,22 +1,25 @@
 import type { Metadata } from "next";
-import { Anton, Inter } from "next/font/google";
+import { Archivo_Black, Questrial } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { getSettings } from "@/lib/data";
 
-// Display pesado en mayúsculas (como los titulares del mockup). Fallback a
-// Impact/Arial Narrow para que se vea condensado aun sin descargar Anton.
-const display = Anton({
+// Sustitutos libres de las fuentes del manual (Extenda / Questral):
+// - Archivo Black: display pesado en mayúsculas para titulares (como el mockup)
+// - Questrial: sans limpia y geométrica para el cuerpo
+const display = Archivo_Black({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-display",
   fallback: ["Impact", "Arial Narrow", "sans-serif"],
 });
 
-const sans = Inter({
+const sans = Questrial({
+  weight: "400",
   subsets: ["latin"],
   variable: "--font-sans",
+  fallback: ["Helvetica", "Arial", "sans-serif"],
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://groovologycr.vercel.app";
