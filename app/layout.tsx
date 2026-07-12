@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Archivo_Black, Questrial } from "next/font/google";
+import { Anton, Questrial } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { getSettings } from "@/lib/data";
 
 // Sustitutos libres de las fuentes del manual (Extenda / Questral):
-// - Archivo Black: display pesado en mayúsculas para titulares (como el mockup)
+// - Anton: display pesado y CONDENSADO en mayúsculas (más estrecho, más impacto)
 // - Questrial: sans limpia y geométrica para el cuerpo
-const display = Archivo_Black({
+const display = Anton({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-display",

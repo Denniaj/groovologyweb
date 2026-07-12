@@ -13,7 +13,7 @@ const FEATURES = [
 
 export default async function HomePage() {
   const [styles, settings] = await Promise.all([getStyles(), getSettings()])
-  const featured = styles.filter((s) => s.slug !== 'crew-pro' && s.slug !== 'freestyle').slice(0, 4)
+  const featured = styles.filter((s) => s.slug !== 'crew' && s.slug !== 'freestyle').slice(0, 4)
 
   return (
     <>

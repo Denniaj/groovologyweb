@@ -11,10 +11,19 @@ const NAV = [
   { href: '/nosotros', label: 'Nosotros' },
   { href: '/clases', label: 'Clases' },
   { href: '/horarios', label: 'Horarios' },
-  { href: '/crew-pro', label: 'Crew Pro' },
+  { href: '/crew', label: 'Crew' },
   { href: '/galeria', label: 'Galería' },
   { href: '/contacto', label: 'Contacto' },
 ]
+
+function UserIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  )
+}
 
 function isActive(pathname: string, href: string) {
   return href === '/' ? pathname === '/' : pathname.startsWith(href)
@@ -48,7 +57,13 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
+          <Link
+            href="/login"
+            className="hidden items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-white/80 transition-colors hover:text-white sm:flex"
+          >
+            <UserIcon /> Mi cuenta
+          </Link>
           <Link
             href="/registro"
             className="hidden border border-white px-5 py-2.5 text-xs font-semibold uppercase tracking-widest text-white transition-colors hover:bg-white hover:text-black sm:inline-block"
@@ -81,6 +96,13 @@ export function Header() {
               {item.label}
             </Link>
           ))}
+          <Link
+            href="/login"
+            onClick={() => setOpen(false)}
+            className="mt-2 flex items-center gap-2 py-3 text-sm font-semibold uppercase tracking-widest text-white/80"
+          >
+            <UserIcon /> Mi cuenta
+          </Link>
           <Link
             href="/registro"
             onClick={() => setOpen(false)}

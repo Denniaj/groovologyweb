@@ -17,7 +17,7 @@ const COLS = [
     links: [
       { href: '/clases', label: 'Clases' },
       { href: '/horarios', label: 'Horarios' },
-      { href: '/crew-pro', label: 'Crew Pro' },
+      { href: '/crew', label: 'Crew' },
       { href: '/galeria', label: 'Galería' },
     ],
   },
@@ -48,7 +48,8 @@ export function Footer({ settings }: { settings: Settings }) {
           <div>
             <Logo className="h-12 w-auto" />
             <p className="mt-4 max-w-xs text-sm text-white/60">
-              Estudio y compañía de bailarines en Costa Rica. Más que baile, es actitud.
+              Un espacio para crecer, crear y moverte con propósito, dentro de una
+              comunidad que impulsa tu proceso artístico.
             </p>
             {settings?.address && (
               <p className="mt-4 flex items-start gap-2 text-sm text-white/60">
