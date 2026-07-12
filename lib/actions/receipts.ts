@@ -8,6 +8,7 @@ import { receiptUploadSchema, type ReceiptUploadInput } from '@/lib/validations'
 import { extractReceiptData } from '@/lib/receipts/gemini'
 import { decideReceipt } from '@/lib/receipts/verify'
 import { sendReceiptVerifiedEmail, sendReceiptNeedsReviewEmail } from '@/lib/email/send'
+import { rateLimit } from '@/lib/rate-limit'
 import type { ActionResult } from '@/lib/actions/types'
 
 const EXT_BY_MIME: Record<string, string> = {
@@ -25,6 +26,10 @@ const EXT_BY_MIME: Record<string, string> = {
 export async function uploadReceipt(
   input: ReceiptUploadInput
 ): Promise<ActionResult<{ status: 'auto_approved' | 'needs_review'; reason: string | null }>> {
+  if (!(await rateLimit('receipt', 10, 60))) {
+    return { success: false, error: 'Demasiados intentos. Espera un momento e inténtalo de nuevo.' }
+  }
+
   const parsed = receiptUploadSchema.safeParse(input)
   if (!parsed.success) {
     return {

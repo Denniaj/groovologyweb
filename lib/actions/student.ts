@@ -12,9 +12,11 @@ import {
   type JoinEventInput,
   type TrialClassInput,
 } from '@/lib/validations'
+import { rateLimit } from '@/lib/rate-limit'
 import type { ActionResult } from '@/lib/actions/types'
 
 const TRIAL_EXTRA_CRC = 2000 // clase suelta en semana de prueba (₡2 000)
+const TOO_MANY = 'Demasiados intentos. Espera un momento e inténtalo de nuevo.'
 
 // Devuelve el id del usuario autenticado (validado contra el servidor de auth)
 // o null. getUser() verifica el JWT, no solo lee la cookie.
@@ -32,6 +34,8 @@ function fieldErrors(error: z.ZodError) {
 // Inscribirse a paquete + clase(s) desde la cuenta.
 // ---------------------------------------------------------------------
 export async function enroll(input: EnrollInput): Promise<ActionResult<{ enrollmentId: string }>> {
+  if (!(await rateLimit('enroll', 10, 60))) return { success: false, error: TOO_MANY }
+
   const parsed = enrollSchema.safeParse(input)
   if (!parsed.success) {
     return { success: false, error: 'Revisa los campos.', fieldErrors: fieldErrors(parsed.error) }

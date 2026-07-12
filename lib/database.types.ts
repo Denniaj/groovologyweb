@@ -573,6 +573,24 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limits: {
+        Row: {
+          count: number
+          key: string
+          window_start: string
+        }
+        Insert: {
+          count?: number
+          key: string
+          window_start?: string
+        }
+        Update: {
+          count?: number
+          key?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       settings: {
         Row: {
           address: string | null
@@ -663,6 +681,10 @@ export type Database = {
         Args: { p_enrollment_id: string }
         Returns: undefined
       }
+      check_rate_limit: {
+        Args: { p_key: string; p_max: number; p_window_seconds: number }
+        Returns: boolean
+      }
       enroll_student: {
         Args: {
           p_class_ids: string[]
@@ -674,6 +696,7 @@ export type Database = {
       }
       get_available_capacity: { Args: { p_class_id: string }; Returns: number }
       get_student_balance: { Args: { p_student_id: string }; Returns: Json }
+      is_admin: { Args: never; Returns: boolean }
       join_event: {
         Args: { p_event_id: string; p_student_id: string }
         Returns: string

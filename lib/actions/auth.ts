@@ -6,7 +6,10 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { registerSchema, loginSchema, type RegisterInput, type LoginInput } from '@/lib/validations'
 import { sendWelcomeEmail } from '@/lib/email/send'
+import { rateLimit } from '@/lib/rate-limit'
 import type { ActionResult } from '@/lib/actions/types'
+
+const TOO_MANY = 'Demasiados intentos. Espera un momento e inténtalo de nuevo.'
 
 // ---------------------------------------------------------------------
 // Registro: crea la cuenta y, si no es alumna nueva, genera su inscripción
@@ -17,6 +20,8 @@ import type { ActionResult } from '@/lib/actions/types'
 export async function register(
   input: RegisterInput
 ): Promise<ActionResult<{ needsEmailConfirmation: boolean }>> {
+  if (!(await rateLimit('register', 5, 60))) return { success: false, error: TOO_MANY }
+
   const parsed = registerSchema.safeParse(input)
   if (!parsed.success) {
     return {
@@ -99,6 +104,8 @@ export async function register(
 // Login: inicia sesión y redirige a la cuenta del alumno.
 // ---------------------------------------------------------------------
 export async function login(input: LoginInput): Promise<ActionResult> {
+  if (!(await rateLimit('login', 10, 60))) return { success: false, error: TOO_MANY }
+
   const parsed = loginSchema.safeParse(input)
   if (!parsed.success) {
     return {
