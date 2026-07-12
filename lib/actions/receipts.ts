@@ -7,6 +7,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { receiptUploadSchema, type ReceiptUploadInput } from '@/lib/validations'
 import { extractReceiptData } from '@/lib/receipts/gemini'
 import { decideReceipt } from '@/lib/receipts/verify'
+import { sendReceiptVerifiedEmail, sendReceiptNeedsReviewEmail } from '@/lib/email/send'
 import type { ActionResult } from '@/lib/actions/types'
 
 const EXT_BY_MIME: Record<string, string> = {
@@ -44,7 +45,7 @@ export async function uploadReceipt(
   // El cargo debe existir, ser del alumno y estar por pagar.
   const { data: charge } = await admin
     .from('charges')
-    .select('id, student_id, amount_crc, type, status, enrollment_id')
+    .select('id, student_id, amount_crc, type, status, enrollment_id, description')
     .eq('id', charge_id)
     .maybeSingle()
 
@@ -117,13 +118,23 @@ export async function uploadReceipt(
     }
   }
 
+  // Datos del alumno para el correo (no fatal si falla).
+  const { data: profile } = await admin
+    .from('profiles')
+    .select('email, first_name')
+    .eq('id', userId)
+    .single()
+  const concept = charge.description ?? 'Cargo'
+
   if (finalStatus === 'auto_approved') {
     // Marcar el cargo como pagado y activar la inscripción si era mensualidad.
     await admin.from('charges').update({ status: 'paid' }).eq('id', charge_id)
     if (charge.type === 'package' && charge.enrollment_id) {
       await admin.from('enrollments').update({ status: 'active' }).eq('id', charge.enrollment_id)
     }
-    // TODO(email): enviar correo "comprobante verificado" cuando lib/email esté listo.
+    if (profile?.email) {
+      await sendReceiptVerifiedEmail(profile.email, profile.first_name, charge.amount_crc, concept)
+    }
   } else {
     // Caso excepcional: dejar aviso para que el admin lo revise a mano.
     await admin.from('admin_notifications').insert({
@@ -132,6 +143,9 @@ export async function uploadReceipt(
       reference_table: 'charges',
       reference_id: charge_id,
     })
+    if (profile?.email) {
+      await sendReceiptNeedsReviewEmail(profile.email, profile.first_name, finalReason ?? 'Requiere revisión.')
+    }
   }
 
   revalidatePath('/mi-cuenta')

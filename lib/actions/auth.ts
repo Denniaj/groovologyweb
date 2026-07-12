@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { registerSchema, loginSchema, type RegisterInput, type LoginInput } from '@/lib/validations'
+import { sendWelcomeEmail } from '@/lib/email/send'
 import type { ActionResult } from '@/lib/actions/types'
 
 // ---------------------------------------------------------------------
@@ -88,6 +89,8 @@ export async function register(
       console.error('join_event falló en registro:', joinError.message)
     }
   }
+
+  await sendWelcomeEmail(data.email, data.first_name)
 
   return { success: true, data: { needsEmailConfirmation: !signUp.session } }
 }
