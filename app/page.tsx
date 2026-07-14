@@ -82,10 +82,12 @@ export default async function HomePage() {
               <Link key={s.id} href={`/clases/${s.slug}`} className="group block">
                 <StyleImage slug={s.slug} name={s.name} className="aspect-[3/4] w-full" />
                 <div className="mt-3">
-                  <h3 className="font-display text-xl uppercase tracking-wide">{s.name}</h3>
-                  <p className="mt-1 flex items-center justify-between text-xs uppercase tracking-widest text-white/50">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="font-display text-xl uppercase tracking-wide">{s.name}</h3>
+                    <ArrowRight size={16} className="shrink-0 transition-transform group-hover:translate-x-1" />
+                  </div>
+                  <p className="mt-1 whitespace-nowrap text-[11px] uppercase tracking-normal text-white/50">
                     {s.short_description}
-                    <ArrowRight size={14} className="shrink-0 transition-transform group-hover:translate-x-1" />
                   </p>
                 </div>
               </Link>
