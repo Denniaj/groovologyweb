@@ -27,7 +27,7 @@ export function StyleImage({
       <img
         src={`/styles/${slug}.jpg`}
         alt={name}
-        className="absolute inset-0 h-full w-full object-cover grayscale"
+        className="absolute inset-0 h-full w-full object-cover"
         onError={() => setError(true)}
       />
     </div>
