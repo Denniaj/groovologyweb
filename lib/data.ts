@@ -57,6 +57,18 @@ export async function getClasses() {
   return data ?? []
 }
 
+export async function getClassesForStyle(styleId: string) {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('classes')
+    .select('*')
+    .eq('style_id', styleId)
+    .eq('is_active', true)
+    .order('weekday')
+    .order('start_time')
+  return data ?? []
+}
+
 export async function getOpenEvents() {
   const supabase = await createClient()
   const { data } = await supabase

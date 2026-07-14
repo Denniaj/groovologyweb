@@ -117,6 +117,7 @@ export type Database = {
           id: string
           instructor_id: string | null
           is_active: boolean
+          is_kids: boolean
           level: Database["public"]["Enums"]["class_level"]
           room: string | null
           start_time: string
@@ -131,6 +132,7 @@ export type Database = {
           id?: string
           instructor_id?: string | null
           is_active?: boolean
+          is_kids?: boolean
           level?: Database["public"]["Enums"]["class_level"]
           room?: string | null
           start_time: string
@@ -145,6 +147,7 @@ export type Database = {
           id?: string
           instructor_id?: string | null
           is_active?: boolean
+          is_kids?: boolean
           level?: Database["public"]["Enums"]["class_level"]
           room?: string | null
           start_time?: string
