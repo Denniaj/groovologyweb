@@ -20,7 +20,7 @@ export default async function HomePage() {
     <>
       {/* HERO */}
       <section className="relative border-b border-white/10">
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 py-16 lg:grid-cols-2 lg:gap-12 lg:px-8 lg:py-24">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-5 py-16 lg:grid-cols-2 lg:gap-12 lg:px-8 lg:py-24">
           <div>
             <h1 className="font-display text-5xl uppercase leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
               Más que baile,<br />es actitud.
@@ -37,10 +37,13 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="relative">
-            <PhotoPlaceholder label="Groovology" className="aspect-[4/3] w-full lg:aspect-[5/4]" />
-            <Socials settings={settings} className="absolute -right-2 top-1/2 hidden -translate-y-1/2 flex-col lg:flex" />
-          </div>
+          <PhotoPlaceholder label="Groovology" className="aspect-[4/3] w-full lg:aspect-[5/4]" />
+
+          {/* Redes: en el margen derecho del contenedor, nunca sobre la imagen */}
+          <Socials
+            settings={settings}
+            className="absolute right-0 top-1/2 hidden -translate-y-1/2 flex-col lg:flex"
+          />
         </div>
       </section>
 
