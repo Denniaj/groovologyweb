@@ -49,13 +49,25 @@ export async function register(
   })
 
   if (error) {
-    const already = /already|registered|exists/i.test(error.message)
-    return {
-      success: false,
-      error: already
-        ? 'Ya existe una cuenta con ese correo.'
-        : 'No se pudo crear la cuenta. Inténtalo de nuevo.',
+    console.error('signUp falló:', error.status, error.message)
+    const m = error.message
+    if (/already|registered|exists/i.test(m)) {
+      return { success: false, error: 'Ya existe una cuenta con ese correo.' }
     }
+    if (/invalid/i.test(m) && /email/i.test(m)) {
+      return {
+        success: false,
+        error: 'Ese correo no es válido. Revisa que esté bien escrito.',
+        fieldErrors: { email: ['Correo inválido'] },
+      }
+    }
+    if (/rate limit/i.test(m)) {
+      return {
+        success: false,
+        error: 'Estamos recibiendo muchos registros en este momento. Espera unos minutos e inténtalo de nuevo.',
+      }
+    }
+    return { success: false, error: 'No se pudo crear la cuenta. Inténtalo de nuevo.' }
   }
 
   const studentId = signUp.user?.id
