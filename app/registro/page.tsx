@@ -41,6 +41,7 @@ export default async function RegistroPage() {
             name: p.name,
             price_crc: p.price_crc,
             duration_days: p.duration_days,
+            frequency: p.frequency,
           }))}
           classes={classOptions}
           events={events.map((e) => ({ id: e.id, name: e.name }))}

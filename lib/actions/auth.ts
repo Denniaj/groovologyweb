@@ -81,6 +81,22 @@ export async function register(
   const admin = createAdminClient()
 
   if (!data.is_new_student && data.package_id) {
+    // Tope de clases según la frecuencia del paquete (ilimitado = sin tope).
+    const { data: pkg } = await admin
+      .from('packages')
+      .select('frequency')
+      .eq('id', data.package_id)
+      .maybeSingle()
+    const MAX_BY_FREQ: Record<string, number> = { weekly_1: 1, weekly_2: 2, weekly_3: 3 }
+    const max = pkg ? (MAX_BY_FREQ[pkg.frequency] ?? Infinity) : Infinity
+    if (data.class_ids.length > max) {
+      return {
+        success: false,
+        error: `Tu paquete permite hasta ${max} clase(s). Quita alguna e inténtalo de nuevo.`,
+        fieldErrors: { class_ids: [`Máximo ${max} clase(s) para este paquete`] },
+      }
+    }
+
     const { error: enrollError } = await admin.rpc('enroll_student', {
       p_student_id: studentId,
       p_package_id: data.package_id,

@@ -7,7 +7,16 @@ import { Label, Input, Select, SubmitButton, FormAlert, FieldError } from '@/com
 import { ClassBadges } from '@/components/site/ClassBadges'
 import { WEEKDAYS, formatTime } from '@/lib/format'
 
-export type PackageOption = { id: string; name: string; price_crc: number; duration_days: number }
+export type PackageOption = {
+  id: string
+  name: string
+  price_crc: number
+  duration_days: number
+  frequency: string
+}
+
+// Máximo de clases según la frecuencia del paquete (ilimitado = sin tope).
+const MAX_BY_FREQ: Record<string, number> = { weekly_1: 1, weekly_2: 2, weekly_3: 3 }
 export type ClassOption = {
   id: string
   weekday: number
@@ -42,8 +51,29 @@ export function RegisterForm({
 
   const kidsSelected = classes.some((c) => classIds.includes(c.id) && c.is_kids)
 
+  const selectedPkg = packages.find((p) => p.id === packageId)
+  const maxClasses = selectedPkg ? (MAX_BY_FREQ[selectedPkg.frequency] ?? Infinity) : Infinity
+  const limitReached = classIds.length >= maxClasses
+
   function toggle(list: string[], id: string, set: (v: string[]) => void) {
     set(list.includes(id) ? list.filter((x) => x !== id) : [...list, id])
+  }
+
+  // Marca/desmarca una clase respetando el máximo del paquete.
+  function toggleClass(id: string) {
+    if (classIds.includes(id)) {
+      setClassIds(classIds.filter((x) => x !== id))
+    } else if (classIds.length < maxClasses) {
+      setClassIds([...classIds, id])
+    }
+  }
+
+  // Al cambiar de paquete, recorta la selección si excede el nuevo máximo.
+  function onPackageChange(id: string) {
+    setPackageId(id)
+    const pkg = packages.find((p) => p.id === id)
+    const max = pkg ? (MAX_BY_FREQ[pkg.frequency] ?? Infinity) : Infinity
+    if (classIds.length > max) setClassIds(classIds.slice(0, max))
   }
 
   function onSubmit(formData: FormData) {
@@ -197,7 +227,7 @@ export function RegisterForm({
               <Select
                 id="package_id"
                 value={packageId}
-                onChange={(e) => setPackageId(e.target.value)}
+                onChange={(e) => onPackageChange(e.target.value)}
                 error={fieldErrors.package_id?.[0]}
               >
                 <option value="">Selecciona un paquete</option>
@@ -211,20 +241,40 @@ export function RegisterForm({
           </div>
 
           <div>
-            <Label>Clases</Label>
+            <div className="flex items-baseline justify-between gap-3">
+              <Label>Clases</Label>
+              {selectedPkg && (
+                <span className="text-xs text-white/50">
+                  {Number.isFinite(maxClasses)
+                    ? `Elige ${maxClasses} · llevas ${classIds.length}`
+                    : `Ilimitado · llevas ${classIds.length}`}
+                </span>
+              )}
+            </div>
+            {!selectedPkg && (
+              <p className="mt-1 text-xs text-white/40">Primero elige un paquete arriba.</p>
+            )}
             <div className="mt-2 grid gap-2 sm:grid-cols-2">
               {classes.map((c) => {
                 const checked = classIds.includes(c.id)
+                const disabled = !selectedPkg || (!checked && limitReached)
                 return (
                   <label
                     key={c.id}
-                    className={`flex cursor-pointer items-center justify-between gap-3 border px-4 py-3 transition-colors ${checked ? 'border-white bg-white/10' : 'border-white/20 hover:border-white/50'}`}
+                    className={`flex items-center justify-between gap-3 border px-4 py-3 transition-colors ${
+                      checked
+                        ? 'border-white bg-white/10'
+                        : disabled
+                          ? 'cursor-not-allowed border-white/10 opacity-40'
+                          : 'cursor-pointer border-white/20 hover:border-white/50'
+                    }`}
                   >
                     <span className="flex items-center gap-3">
                       <input
                         type="checkbox"
                         checked={checked}
-                        onChange={() => toggle(classIds, c.id, setClassIds)}
+                        disabled={disabled}
+                        onChange={() => toggleClass(c.id)}
                         className="h-4 w-4 accent-white"
                       />
                       <span>
