@@ -7,8 +7,10 @@ import { StyleImage } from '@/components/site/StyleImage'
 import { ClassBadges } from '@/components/site/ClassBadges'
 import { WEEKDAYS, formatTime } from '@/lib/format'
 
-export async function generateMetadata(props: PageProps<'/clases/[slug]'>): Promise<Metadata> {
-  const { slug } = await props.params
+type Props = { params: Promise<{ slug: string }> }
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
   const style = await getStyleBySlug(slug)
   if (!style) return { title: 'Clase no encontrada' }
   return {
@@ -17,8 +19,8 @@ export async function generateMetadata(props: PageProps<'/clases/[slug]'>): Prom
   }
 }
 
-export default async function StyleDetailPage(props: PageProps<'/clases/[slug]'>) {
-  const { slug } = await props.params
+export default async function StyleDetailPage({ params }: Props) {
+  const { slug } = await params
   const style = await getStyleBySlug(slug)
   if (!style) notFound()
 
