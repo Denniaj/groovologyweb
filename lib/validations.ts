@@ -104,6 +104,26 @@ export const trialClassSchema = z.object({
 export type TrialClassInput = z.infer<typeof trialClassSchema>
 
 // ---------------------------------------------------------------------
+// Cancelar inscripción
+// ---------------------------------------------------------------------
+export const cancelEnrollmentSchema = z.object({
+  enrollment_id: uuid,
+})
+
+export type CancelEnrollmentInput = z.infer<typeof cancelEnrollmentSchema>
+
+// ---------------------------------------------------------------------
+// Editar perfil (nombre, apellidos, teléfono)
+// ---------------------------------------------------------------------
+export const editProfileSchema = z.object({
+  first_name: z.string().trim().min(1, 'Nombre requerido'),
+  last_name: z.string().trim().min(1, 'Apellidos requeridos'),
+  phone,
+})
+
+export type EditProfileInput = z.infer<typeof editProfileSchema>
+
+// ---------------------------------------------------------------------
 // Subida de comprobante (validación del archivo)
 // ---------------------------------------------------------------------
 const MAX_RECEIPT_BYTES = 5 * 1024 * 1024 // 5 MB (igual que el bucket)

@@ -8,9 +8,13 @@ import {
   enrollSchema,
   joinEventSchema,
   trialClassSchema,
+  cancelEnrollmentSchema,
+  editProfileSchema,
   type EnrollInput,
   type JoinEventInput,
   type TrialClassInput,
+  type CancelEnrollmentInput,
+  type EditProfileInput,
 } from '@/lib/validations'
 import { rateLimit } from '@/lib/rate-limit'
 import type { ActionResult } from '@/lib/actions/types'
@@ -167,4 +171,67 @@ export async function bookExtraClass(input: TrialClassInput): Promise<ActionResu
 
   revalidatePath('/mi-cuenta')
   return { success: true, data: { chargeId: data.id } }
+}
+
+// ---------------------------------------------------------------------
+// Cancelar una inscripción propia. Verifica que sea del alumno antes de
+// llamar al RPC (que cancela la inscripción y sus cargos pendientes).
+// ---------------------------------------------------------------------
+export async function cancelEnrollment(input: CancelEnrollmentInput): Promise<ActionResult> {
+  const parsed = cancelEnrollmentSchema.safeParse(input)
+  if (!parsed.success) {
+    return { success: false, error: 'Solicitud inválida.', fieldErrors: fieldErrors(parsed.error) }
+  }
+
+  const userId = await getUserId()
+  if (!userId) return { success: false, error: 'Debes iniciar sesión.' }
+
+  const admin = createAdminClient()
+  const { data: enrollment } = await admin
+    .from('enrollments')
+    .select('id, student_id, status')
+    .eq('id', parsed.data.enrollment_id)
+    .maybeSingle()
+
+  if (!enrollment || enrollment.student_id !== userId) {
+    return { success: false, error: 'Inscripción no encontrada.' }
+  }
+  if (enrollment.status === 'cancelled') {
+    return { success: false, error: 'Esta inscripción ya está cancelada.' }
+  }
+
+  const { error } = await admin.rpc('cancel_enrollment', { p_enrollment_id: parsed.data.enrollment_id })
+  if (error) return { success: false, error: 'No se pudo cancelar la inscripción.' }
+
+  revalidatePath('/mi-cuenta')
+  return { success: true, data: undefined }
+}
+
+// ---------------------------------------------------------------------
+// Editar el perfil propio (nombre, apellidos, teléfono). El correo, la
+// cédula y la fecha de nacimiento no se editan aquí.
+// ---------------------------------------------------------------------
+export async function updateProfile(input: EditProfileInput): Promise<ActionResult> {
+  const parsed = editProfileSchema.safeParse(input)
+  if (!parsed.success) {
+    return { success: false, error: 'Revisa los campos.', fieldErrors: fieldErrors(parsed.error) }
+  }
+
+  const userId = await getUserId()
+  if (!userId) return { success: false, error: 'Debes iniciar sesión.' }
+
+  const admin = createAdminClient()
+  const { error } = await admin
+    .from('profiles')
+    .update({
+      first_name: parsed.data.first_name,
+      last_name: parsed.data.last_name,
+      phone: parsed.data.phone,
+    })
+    .eq('id', userId)
+
+  if (error) return { success: false, error: 'No se pudo actualizar tu perfil.' }
+
+  revalidatePath('/mi-cuenta')
+  return { success: true, data: undefined }
 }

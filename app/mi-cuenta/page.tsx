@@ -5,7 +5,13 @@ import { getCurrentUser, getMyProfile, getMyEnrollments, getMyCharges, getMyEven
 import { getClasses } from '@/lib/data'
 import { ClassBadges } from '@/components/site/ClassBadges'
 import { ReceiptUpload } from '@/components/account/ReceiptUpload'
-import { LogoutButton, TrialClassPicker } from '@/components/account/AccountActions'
+import {
+  LogoutButton,
+  TrialClassPicker,
+  ExtraClassPicker,
+  CancelEnrollmentButton,
+  EditProfile,
+} from '@/components/account/AccountActions'
 import { WEEKDAYS, formatTime } from '@/lib/format'
 
 export const metadata: Metadata = {
@@ -43,8 +49,16 @@ export default async function MiCuentaPage() {
 
   const pendientes = charges.filter((c) => c.status === 'pending' || c.status === 'overdue')
   const totalPendiente = pendientes.reduce((s, c) => s + c.amount_crc, 0)
-  const puedeProbar = profile?.is_new_student && !trial
-  const trialClasses = puedeProbar ? await getClasses() : []
+  const puedeProbar = Boolean(profile?.is_new_student && !trial)
+  // Semana de prueba: ya usó la clase gratis pero todavía no eligió paquete.
+  const enSemanaPrueba = Boolean(profile?.is_new_student && trial && enrollments.length === 0)
+  const classList = puedeProbar || enSemanaPrueba ? await getClasses() : []
+  const classOptions = classList.map((c) => ({
+    id: c.id,
+    weekday: c.weekday,
+    start_time: c.start_time,
+    dance_styles: c.dance_styles ? { name: c.dance_styles.name } : null,
+  }))
 
   return (
     <section className="mx-auto max-w-4xl px-5 py-12 lg:py-16">
@@ -56,7 +70,18 @@ export default async function MiCuentaPage() {
             Hola, {profile?.first_name ?? ''}
           </h1>
         </div>
-        <LogoutButton />
+        <div className="flex items-center gap-5">
+          {profile && (
+            <EditProfile
+              profile={{
+                first_name: profile.first_name,
+                last_name: profile.last_name,
+                phone: profile.phone,
+              }}
+            />
+          )}
+          <LogoutButton />
+        </div>
       </div>
 
       {/* RESUMEN */}
@@ -77,17 +102,15 @@ export default async function MiCuentaPage() {
         </div>
       </div>
 
-      {/* CLASE DE PRUEBA */}
+      {/* CLASE DE PRUEBA / CLASES SUELTAS */}
       {puedeProbar && (
         <div className="mt-10">
-          <TrialClassPicker
-            classes={trialClasses.map((c) => ({
-              id: c.id,
-              weekday: c.weekday,
-              start_time: c.start_time,
-              dance_styles: c.dance_styles ? { name: c.dance_styles.name } : null,
-            }))}
-          />
+          <TrialClassPicker classes={classOptions} />
+        </div>
+      )}
+      {enSemanaPrueba && (
+        <div className="mt-10">
+          <ExtraClassPicker classes={classOptions} />
         </div>
       )}
 
@@ -134,9 +157,16 @@ export default async function MiCuentaPage() {
                   )
                 })}
               </ul>
-              {e.end_date && (
-                <p className="mt-3 text-xs text-white/40">Vigencia hasta {e.end_date}</p>
-              )}
+              <div className="mt-3 flex items-center justify-between gap-3">
+                {e.end_date ? (
+                  <p className="text-xs text-white/40">Vigencia hasta {e.end_date}</p>
+                ) : (
+                  <span />
+                )}
+                {(e.status === 'active' || e.status === 'pending_payment') && (
+                  <CancelEnrollmentButton enrollmentId={e.id} />
+                )}
+              </div>
             </li>
           ))}
         </ul>
