@@ -29,7 +29,10 @@ export function Input({ error, ...props }: InputHTMLAttributes<HTMLInputElement>
 export function Select({ error, children, ...props }: SelectHTMLAttributes<HTMLSelectElement> & { error?: string }) {
   return (
     <>
-      <select {...props} className={`${base} ${error ? 'border-red-400/60' : ''} ${props.className ?? ''}`}>
+      <select
+        {...props}
+        className={`${base} [&>option]:bg-neutral-900 [&>option]:text-white ${error ? 'border-red-400/60' : ''} ${props.className ?? ''}`}
+      >
         {children}
       </select>
       <FieldError>{error}</FieldError>

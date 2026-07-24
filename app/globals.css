@@ -127,5 +127,7 @@
   }
   html {
     @apply font-sans;
+    /* Controles nativos (menús de select, date pickers, scrollbars) en oscuro */
+    color-scheme: dark;
   }
 }
