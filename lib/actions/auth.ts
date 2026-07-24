@@ -144,7 +144,7 @@ export async function login(input: LoginInput): Promise<ActionResult> {
   }
 
   const supabase = await createClient()
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data: signIn, error } = await supabase.auth.signInWithPassword({
     email: parsed.data.email,
     password: parsed.data.password,
   })
@@ -153,7 +153,13 @@ export async function login(input: LoginInput): Promise<ActionResult> {
     return { success: false, error: 'Correo o contraseña incorrectos.' }
   }
 
-  redirect('/mi-cuenta')
+  // A los admins los llevamos directo al panel.
+  let destino = '/mi-cuenta'
+  if (signIn.user) {
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', signIn.user.id).maybeSingle()
+    if (profile?.role === 'admin') destino = '/admin'
+  }
+  redirect(destino)
 }
 
 // ---------------------------------------------------------------------
