@@ -8,6 +8,17 @@ export async function getCurrentUser() {
   return data.user
 }
 
+// Info liviana de la sesión para el header y las redirecciones.
+export async function getViewer() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return null
+  const { data } = await supabase.from('profiles').select('role, first_name').eq('id', user.id).maybeSingle()
+  return { id: user.id, isAdmin: data?.role === 'admin', firstName: data?.first_name ?? '' }
+}
+
 export async function getMyProfile(userId: string) {
   const supabase = await createClient()
   const { data } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle()

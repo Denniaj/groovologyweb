@@ -75,6 +75,15 @@ export const loginSchema = z.object({
 export type LoginInput = z.infer<typeof loginSchema>
 
 // ---------------------------------------------------------------------
+// Recuperar contraseña
+// ---------------------------------------------------------------------
+export const resetRequestSchema = z.object({ email: z.email('Correo inválido') })
+export type ResetRequestInput = z.infer<typeof resetRequestSchema>
+
+export const newPasswordSchema = z.object({ password })
+export type NewPasswordInput = z.infer<typeof newPasswordSchema>
+
+// ---------------------------------------------------------------------
 // Inscribirse a paquete/clase(s) (desde la cuenta)
 // ---------------------------------------------------------------------
 export const enrollSchema = z.object({

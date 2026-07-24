@@ -4,7 +4,16 @@ import { z } from 'zod'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { registerSchema, loginSchema, type RegisterInput, type LoginInput } from '@/lib/validations'
+import {
+  registerSchema,
+  loginSchema,
+  resetRequestSchema,
+  newPasswordSchema,
+  type RegisterInput,
+  type LoginInput,
+  type ResetRequestInput,
+  type NewPasswordInput,
+} from '@/lib/validations'
 import { sendWelcomeEmail } from '@/lib/email/send'
 import { rateLimit } from '@/lib/rate-limit'
 import type { ActionResult } from '@/lib/actions/types'
@@ -160,6 +169,54 @@ export async function login(input: LoginInput): Promise<ActionResult> {
     if (profile?.role === 'admin') destino = '/admin'
   }
   redirect(destino)
+}
+
+// ---------------------------------------------------------------------
+// Recuperar contraseña: envía el correo con el enlace de restablecimiento.
+// Siempre responde "ok" para no revelar si el correo existe.
+// ---------------------------------------------------------------------
+export async function requestPasswordReset(input: ResetRequestInput): Promise<ActionResult> {
+  if (!(await rateLimit('reset', 3, 60))) return { success: false, error: TOO_MANY }
+
+  const parsed = resetRequestSchema.safeParse(input)
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: 'Correo inválido.',
+      fieldErrors: z.flattenError(parsed.error).fieldErrors as Record<string, string[]>,
+    }
+  }
+
+  const site = process.env.NEXT_PUBLIC_SITE_URL || 'https://groovologycr.vercel.app'
+  const supabase = await createClient()
+  await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+    redirectTo: `${site}/auth/confirm`,
+  })
+  return { success: true, data: undefined }
+}
+
+// ---------------------------------------------------------------------
+// Actualizar contraseña (tras entrar por el enlace de recuperación).
+// ---------------------------------------------------------------------
+export async function updatePassword(input: NewPasswordInput): Promise<ActionResult> {
+  const parsed = newPasswordSchema.safeParse(input)
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: 'Revisa la contraseña.',
+      fieldErrors: z.flattenError(parsed.error).fieldErrors as Record<string, string[]>,
+    }
+  }
+
+  const supabase = await createClient()
+  const { error } = await supabase.auth.updateUser({ password: parsed.data.password })
+  if (error) {
+    return {
+      success: false,
+      error: 'No se pudo actualizar la contraseña. El enlace pudo expirar; solicítalo de nuevo.',
+    }
+  }
+  return { success: true, data: undefined }
 }
 
 // ---------------------------------------------------------------------
