@@ -73,3 +73,30 @@ export async function getNotifications(limit = 25) {
     .limit(limit)
   return data ?? []
 }
+
+// --- Clases ---
+export async function getAdminClasses() {
+  const admin = createAdminClient()
+  const { data } = await admin
+    .from('classes')
+    .select('id, weekday, start_time, room, level, is_kids, is_active, dance_styles(name)')
+    .order('weekday')
+    .order('start_time')
+  return data ?? []
+}
+
+export async function getAdminClass(id: string) {
+  const admin = createAdminClient()
+  const { data } = await admin
+    .from('classes')
+    .select('id, style_id, weekday, start_time, duration_minutes, room, level, is_kids')
+    .eq('id', id)
+    .maybeSingle()
+  return data
+}
+
+export async function getStylesForSelect() {
+  const admin = createAdminClient()
+  const { data } = await admin.from('dance_styles').select('id, name').order('sort_order')
+  return data ?? []
+}

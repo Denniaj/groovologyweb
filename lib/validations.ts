@@ -133,6 +133,21 @@ export const editProfileSchema = z.object({
 export type EditProfileInput = z.infer<typeof editProfileSchema>
 
 // ---------------------------------------------------------------------
+// Admin — crear/editar una clase del horario
+// ---------------------------------------------------------------------
+export const classFormSchema = z.object({
+  style_id: uuid,
+  level: z.enum(['principiante', 'intermedio', 'avanzado', 'todos']),
+  weekday: z.coerce.number().int().min(0, 'Día inválido').max(6, 'Día inválido'),
+  start_time: z.string().regex(/^\d{2}:\d{2}$/, 'Hora inválida'),
+  duration_minutes: z.coerce.number().int().min(15).max(240),
+  room: z.string().trim().min(1, 'Salón requerido'),
+  is_kids: z.boolean(),
+})
+
+export type ClassFormInput = z.infer<typeof classFormSchema>
+
+// ---------------------------------------------------------------------
 // Subida de comprobante (validación del archivo)
 // ---------------------------------------------------------------------
 const MAX_RECEIPT_BYTES = 5 * 1024 * 1024 // 5 MB (igual que el bucket)
